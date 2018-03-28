@@ -318,7 +318,7 @@ void multistep_merge_sort(int runs, FILE* inputFP, int* input_buffer, long input
     //Run File name e.g. input.bin.012
     char runFileName[1000];
     char baseFileName[1000];
-    strcpy(baseFileName, "input.bin.");
+    strcpy(baseFileName, inputBinFileName);
     //To store e.g. "012"
     char currentRunName[4];
     
@@ -407,7 +407,7 @@ void multistep_merge_sort(int runs, FILE* inputFP, int* input_buffer, long input
             runs++;
         
         strcpy(baseFileName, inputBinFileName); //To handle
-        strcat(baseFileName,".super.");
+        strcat(baseFileName,".super");
     }
     
     //Final n-way merge which will have n << runs initially created e.g. in our case it became 17 instead of 250
@@ -680,7 +680,7 @@ void replacement_merge_sort(FILE* inputFP, int* input_buffer, char* outputBinFil
 
 
     //Initial load from all runs file into input buffer
-    initial_load_runs(0,runs, runsFP, input_buffer, blockSize, currentBufferRunPointers, runBufferReadCount, isRunExhausted, "input.bin.");
+    initial_load_runs(0,runs, runsFP, input_buffer, blockSize, currentBufferRunPointers, runBufferReadCount, isRunExhausted, inputBinFileName);
 
     /*printf("\n ----- INITIALLY LOADED BUFFER ---------- ");
      printBuffer(input_buffer, 0, 1000);*/
