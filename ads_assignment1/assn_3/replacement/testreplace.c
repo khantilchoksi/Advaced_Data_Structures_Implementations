@@ -15,7 +15,7 @@ int main(){
     // fp=fopen("input.bin.010","rb");
     // fp1=fopen("input.bin 2.010","rb");
     while(fread(&temp,sizeof(int),1,fp)){
- //       printf("%d   %d\n",count3,temp);
+        printf("%d ::  %d\n",count3,temp);
         count3++;
         count++;
         //count3++;
