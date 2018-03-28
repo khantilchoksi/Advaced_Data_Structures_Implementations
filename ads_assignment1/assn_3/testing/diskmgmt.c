@@ -1,5 +1,5 @@
 //
-//  diskmgmt.c
+//  assn_3.c
 //  ads_assignment3
 //
 //  Created by Khantil Choksi on 3/12/18.
@@ -54,8 +54,8 @@ int compare_int( const void* a, const void* b )
 }
 
 //Creating Runs and return total number of runs created i.e. runs = runs or runs = runs + 1
-int create_runs(FILE *inputFP, int *buffer, long input_keys){
-
+int create_runs(FILE *inputFP, int *buffer, long input_keys, char* inputBinFileName){
+    //printf("\n Called CREATE_RUNS");
     int i = 0, remaining_keys;
     int runs = input_keys/1000;
     
@@ -70,7 +70,8 @@ int create_runs(FILE *inputFP, int *buffer, long input_keys){
         readKeyBlocks(inputFP, buffer, 1000);
         qsort(buffer, 1000, sizeof(int), compare_int);
         //printBuffer(input_buffer, 0, 1000);
-        strcpy(runFileName,"input.bin.");
+        strcpy(runFileName,inputBinFileName);
+        strcat(runFileName,".");
         snprintf(currentRunName, 4*sizeof(char), "%03d", i);
         strcat(runFileName,currentRunName);
         
@@ -88,20 +89,22 @@ int create_runs(FILE *inputFP, int *buffer, long input_keys){
         readKeyBlocks(inputFP, buffer, remaining_keys);
         qsort(buffer, remaining_keys, sizeof(int), compare_int);
         
-        strcpy(runFileName,"input.bin.");
+        strcpy(runFileName,inputBinFileName);
+        strcat(runFileName,".");
         snprintf(currentRunName, 4*sizeof(char), "%03d", i);
         strcat(runFileName,currentRunName);
         runFP = fopen( runFileName, "wb" );
         writeKeys(runFP, buffer,remaining_keys );
         fclose(runFP);
     }
-    
+    //printf("\n END OF Called CREATE_RUNS");
     return runs;
 }
 
 //Initial Load into input_buffer for all runs
 void initial_load_runs(int runStart, int runEnd, FILE **runsFP, int *buffer, int blockSize, int *currentBufferRunPointers, int *runBufferReadCount, int *isRunExhausted, char* baseFileName)
 {
+    //printf("\n Called initial_load_runs");
     //Run File name e.g. input.bin.012
     char runFileName[1000];
     //To store e.g. "012"
@@ -111,6 +114,7 @@ void initial_load_runs(int runStart, int runEnd, FILE **runsFP, int *buffer, int
     int numberOfRuns = runEnd - runStart;
     for(i = 0; i<numberOfRuns; i++){
         strcpy(runFileName,baseFileName);
+        strcat(runFileName,".");
         snprintf(currentRunName, 4*sizeof(char), "%03d", (runStart+i));
         strcat(runFileName,currentRunName);
         
@@ -124,7 +128,7 @@ void initial_load_runs(int runStart, int runEnd, FILE **runsFP, int *buffer, int
         
         //printf("\n LOADED FILENAME: %s",runFileName);
     }
-
+    //printf("\n END OF Called initial_load_runs");
     
 }
 
@@ -230,7 +234,7 @@ void merge_runs(int *input_buffer, int* output_buffer, FILE *sortedFP, FILE **ru
     //printf("\n TEST COUNTER: %d\n",testCounter);
 }
 
-void basic_merge_sort(int runs, FILE* inputFP, int* input_buffer, long input_keys, char* outputBinFileName){
+void basic_merge_sort(int runs, FILE* inputFP, int* input_buffer, long input_keys, char* outputBinFileName, char* inputBinFileName){
     int blockSize;  //The amount of each run we can buffer
     
     FILE *sortedFP = NULL;
@@ -248,7 +252,7 @@ void basic_merge_sort(int runs, FILE* inputFP, int* input_buffer, long input_key
     gettimeofday(&startTime, NULL);
     //Basic MergeSort
     //1. Create Runs
-    runs = create_runs(inputFP, input_buffer, input_keys);
+    runs = create_runs(inputFP, input_buffer, input_keys,inputBinFileName);
     
     
     //No need of input file now
@@ -256,7 +260,7 @@ void basic_merge_sort(int runs, FILE* inputFP, int* input_buffer, long input_key
     
     //Calculating how many keys we can accomodate in input_buffer from each
     blockSize = 1000/runs;
-    printf("\n BLOCK SIZE: %d",blockSize);
+    //printf("\n BLOCK SIZE: %d",blockSize);
     
     //Total Numbers of files created =  runs
     
@@ -268,7 +272,7 @@ void basic_merge_sort(int runs, FILE* inputFP, int* input_buffer, long input_key
     
     
     //Initial load from all runs file into input buffer
-    initial_load_runs(0,runs, runsFP, input_buffer, blockSize, currentBufferRunPointers, runBufferReadCount, isRunExhausted, "input.bin.");
+    initial_load_runs(0,runs, runsFP, input_buffer, blockSize, currentBufferRunPointers, runBufferReadCount, isRunExhausted, inputBinFileName);
     
     /*printf("\n ----- INITIALLY LOADED BUFFER ---------- ");
      printBuffer(input_buffer, 0, 1000);*/
@@ -306,7 +310,7 @@ void basic_merge_sort(int runs, FILE* inputFP, int* input_buffer, long input_key
 //    }
 }
 
-void multistep_merge_sort(int runs, FILE* inputFP, int* input_buffer, long input_keys, char* outputBinFileName){
+void multistep_merge_sort(int runs, FILE* inputFP, int* input_buffer, long input_keys, char* outputBinFileName, char* inputBinFileName){
     int blockSize;  //The amount of each run we can buffer
     
     FILE *sortedFP = NULL;
@@ -314,7 +318,7 @@ void multistep_merge_sort(int runs, FILE* inputFP, int* input_buffer, long input
     //Run File name e.g. input.bin.012
     char runFileName[1000];
     char baseFileName[1000];
-    strcpy(baseFileName, "input.bin.");
+    strcpy(baseFileName, inputBinFileName);
     //To store e.g. "012"
     char currentRunName[4];
     
@@ -329,7 +333,7 @@ void multistep_merge_sort(int runs, FILE* inputFP, int* input_buffer, long input
     gettimeofday(&startTime, NULL);
     //Multistep MergeSort
     //1. Create Runs
-    runs = create_runs(inputFP, input_buffer, input_keys);
+    runs = create_runs(inputFP, input_buffer, input_keys,inputBinFileName);
     //So this value will be 250000/1000
     
     //No need of input file now
@@ -341,7 +345,7 @@ void multistep_merge_sort(int runs, FILE* inputFP, int* input_buffer, long input
     int runsToBeMerged = 15;    //This is the hard coded value given in the assignment
     //Calculating how many keys we can accomodate in input_buffer from each
     blockSize = 1000/runsToBeMerged;
-    printf("\n BLOCK SIZE: %d",blockSize);
+    //printf("\n BLOCK SIZE: %d",blockSize);
     
     //Reference pointers to handle runs : All files pointers, each sub buffer pointer, pointer for checking run exhausted,
     FILE *runsFP[100];
@@ -355,7 +359,9 @@ void multistep_merge_sort(int runs, FILE* inputFP, int* input_buffer, long input
             //Implementations of multistep merge
             initial_load_runs((i*15), (i+1)*15, runsFP, input_buffer, blockSize, currentBufferRunPointers, runBufferReadCount, isRunExhausted, baseFileName);
             
-            strcpy(runFileName,"input.bin.super.");
+            
+            strcpy(runFileName,inputBinFileName);
+            strcat(runFileName,".super.");
             snprintf(currentRunName, 4*sizeof(char), "%03d", i);
             strcat(runFileName,currentRunName);
             
@@ -376,11 +382,12 @@ void multistep_merge_sort(int runs, FILE* inputFP, int* input_buffer, long input
             //int startingRun =(runs/15)*15;
             
             blockSize = 1000/runsToBeMerged;     //So new block size will be 100
-            printf("\n NOW NEW blockSize IS : %d",blockSize);
+            //printf("\n NOW NEW blockSize IS : %d",blockSize);
             //(runs/15)*15 = 240 in the case for runs = 250
             initial_load_runs((runs/15)*15, runs, runsFP, input_buffer, blockSize, currentBufferRunPointers, runBufferReadCount, isRunExhausted, baseFileName);
             
-            strcpy(runFileName,"input.bin.super.");
+            strcpy(runFileName,inputBinFileName);
+            strcat(runFileName,".super.");
             snprintf(currentRunName, 4*sizeof(char), "%03d", i);
             strcat(runFileName,currentRunName);
             
@@ -399,17 +406,18 @@ void multistep_merge_sort(int runs, FILE* inputFP, int* input_buffer, long input
         if(runsToBeMerged>0)
             runs++;
         
-        strcpy(baseFileName, "input.bin.super."); //To handle
+        strcpy(baseFileName, inputBinFileName); //To handle
+        strcat(baseFileName,".super");
     }
     
     //Final n-way merge which will have n << runs initially created e.g. in our case it became 17 instead of 250
     // If initially there are less than 15 files created input.bin.--- so the following will directly merge
     if(runs >0){
-        printf("\n Building final SORTED.bin RUNS: %d",runs);
+        //printf("\n Building final SORTED.bin RUNS: %d",runs);
         
         runsToBeMerged = runs;
         blockSize = 1000/runsToBeMerged;     //So new block size will be 1000/17 = 58.82
-        printf("\n OUT NOW blockSize IS : %d",blockSize);
+        //printf("\n OUT NOW blockSize IS : %d",blockSize);
         //(runs/15)*15 = 240 in the case for runs = 250
         
         //baseFileName will have value"input.bin.super." if runs > 15 otherwise it will have value "input.bin." bcz for runs<=15 we don't require to create super run file
@@ -484,7 +492,7 @@ void heapify(int *array, int n){
 }
 
 
-void replacement_merge_sort(FILE* inputFP, int* input_buffer, char* outputBinFileName){
+void replacement_merge_sort(FILE* inputFP, int* input_buffer, char* outputBinFileName, char *inputBinFileName){
     FILE *runFP = NULL;
     //Output Buffer
     int output_buffer[1000], output_index = 0;
@@ -536,7 +544,8 @@ void replacement_merge_sort(FILE* inputFP, int* input_buffer, char* outputBinFil
         output_index = 0;
         //eachRunCount = 0;
         
-        strcpy(runFileName,"input.bin.");
+        strcpy(runFileName,inputBinFileName);
+        strcat(runFileName,".");
         snprintf(currentRunName, 4*sizeof(char), "%03d", i);
         strcat(runFileName,currentRunName);
         runFP = fopen( runFileName, "wb" );
@@ -671,7 +680,7 @@ void replacement_merge_sort(FILE* inputFP, int* input_buffer, char* outputBinFil
 
 
     //Initial load from all runs file into input buffer
-    initial_load_runs(0,runs, runsFP, input_buffer, blockSize, currentBufferRunPointers, runBufferReadCount, isRunExhausted, "input.bin.");
+    initial_load_runs(0,runs, runsFP, input_buffer, blockSize, currentBufferRunPointers, runBufferReadCount, isRunExhausted, inputBinFileName);
 
     /*printf("\n ----- INITIALLY LOADED BUFFER ---------- ");
      printBuffer(input_buffer, 0, 1000);*/
@@ -763,7 +772,7 @@ int main(int argc, char** argv)
     
     char* inputBinFileName = argv[2];
     char* outputBinFileName = argv[3];
-    
+    //char inputFile[1000] =
     
     if( ( inputFP = fopen( inputBinFileName, "rb" )) != NULL){
         //Read 1000 indexes
@@ -782,11 +791,11 @@ int main(int argc, char** argv)
         
         if( strcmp(argv[1],basicCommand) == 0 ){
             //printf("Basic Merge Sort\n");
-            basic_merge_sort(runs, inputFP, input_buffer, input_keys,outputBinFileName);
+            basic_merge_sort(runs, inputFP, input_buffer, input_keys,outputBinFileName,argv[2]);
         }else if( strcmp(argv[1],multiStepCommand) == 0){
             
             //printf("Multistep Merge Sort\n");
-            multistep_merge_sort(runs, inputFP, input_buffer, input_keys,outputBinFileName);
+            multistep_merge_sort(runs, inputFP, input_buffer, input_keys,outputBinFileName,inputBinFileName);
             
         }else if( strcmp(argv[1],replacementCommand) == 0){
 //            //printf("Replacement Fit \n");
@@ -796,7 +805,7 @@ int main(int argc, char** argv)
 //            for(i = 0; i< 7; i++){
 //                printf(" :: %d",a[i]);
 //            }
-            replacement_merge_sort(inputFP, input_buffer,outputBinFileName);
+            replacement_merge_sort(inputFP, input_buffer,outputBinFileName,inputBinFileName);
             
         }else{
             printf("Wrong Command for Merge Sort!\n");

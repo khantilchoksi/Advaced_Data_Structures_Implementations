@@ -1,5 +1,5 @@
 //
-//  diskmgmt.c
+//  assn_3.c
 //  ads_assignment3
 //
 //  Created by Khantil Choksi on 3/12/18.
@@ -55,7 +55,7 @@ int compare_int( const void* a, const void* b )
 
 //Creating Runs and return total number of runs created i.e. runs = runs or runs = runs + 1
 int create_runs(FILE *inputFP, int *buffer, long input_keys, char* inputBinFileName){
-    printf("\n Called CREATE_RUNS");
+    //printf("\n Called CREATE_RUNS");
     int i = 0, remaining_keys;
     int runs = input_keys/1000;
     
@@ -97,14 +97,14 @@ int create_runs(FILE *inputFP, int *buffer, long input_keys, char* inputBinFileN
         writeKeys(runFP, buffer,remaining_keys );
         fclose(runFP);
     }
-    printf("\n END OF Called CREATE_RUNS");
+    //printf("\n END OF Called CREATE_RUNS");
     return runs;
 }
 
 //Initial Load into input_buffer for all runs
 void initial_load_runs(int runStart, int runEnd, FILE **runsFP, int *buffer, int blockSize, int *currentBufferRunPointers, int *runBufferReadCount, int *isRunExhausted, char* baseFileName)
 {
-    printf("\n Called initial_load_runs");
+    //printf("\n Called initial_load_runs");
     //Run File name e.g. input.bin.012
     char runFileName[1000];
     //To store e.g. "012"
@@ -128,7 +128,7 @@ void initial_load_runs(int runStart, int runEnd, FILE **runsFP, int *buffer, int
         
         //printf("\n LOADED FILENAME: %s",runFileName);
     }
-    printf("\n END OF Called initial_load_runs");
+    //printf("\n END OF Called initial_load_runs");
     
 }
 
@@ -260,7 +260,7 @@ void basic_merge_sort(int runs, FILE* inputFP, int* input_buffer, long input_key
     
     //Calculating how many keys we can accomodate in input_buffer from each
     blockSize = 1000/runs;
-    printf("\n BLOCK SIZE: %d",blockSize);
+    //printf("\n BLOCK SIZE: %d",blockSize);
     
     //Total Numbers of files created =  runs
     
@@ -345,7 +345,7 @@ void multistep_merge_sort(int runs, FILE* inputFP, int* input_buffer, long input
     int runsToBeMerged = 15;    //This is the hard coded value given in the assignment
     //Calculating how many keys we can accomodate in input_buffer from each
     blockSize = 1000/runsToBeMerged;
-    printf("\n BLOCK SIZE: %d",blockSize);
+    //printf("\n BLOCK SIZE: %d",blockSize);
     
     //Reference pointers to handle runs : All files pointers, each sub buffer pointer, pointer for checking run exhausted,
     FILE *runsFP[100];
@@ -382,7 +382,7 @@ void multistep_merge_sort(int runs, FILE* inputFP, int* input_buffer, long input
             //int startingRun =(runs/15)*15;
             
             blockSize = 1000/runsToBeMerged;     //So new block size will be 100
-            printf("\n NOW NEW blockSize IS : %d",blockSize);
+            //printf("\n NOW NEW blockSize IS : %d",blockSize);
             //(runs/15)*15 = 240 in the case for runs = 250
             initial_load_runs((runs/15)*15, runs, runsFP, input_buffer, blockSize, currentBufferRunPointers, runBufferReadCount, isRunExhausted, baseFileName);
             
@@ -413,11 +413,11 @@ void multistep_merge_sort(int runs, FILE* inputFP, int* input_buffer, long input
     //Final n-way merge which will have n << runs initially created e.g. in our case it became 17 instead of 250
     // If initially there are less than 15 files created input.bin.--- so the following will directly merge
     if(runs >0){
-        printf("\n Building final SORTED.bin RUNS: %d",runs);
+        //printf("\n Building final SORTED.bin RUNS: %d",runs);
         
         runsToBeMerged = runs;
         blockSize = 1000/runsToBeMerged;     //So new block size will be 1000/17 = 58.82
-        printf("\n OUT NOW blockSize IS : %d",blockSize);
+        //printf("\n OUT NOW blockSize IS : %d",blockSize);
         //(runs/15)*15 = 240 in the case for runs = 250
         
         //baseFileName will have value"input.bin.super." if runs > 15 otherwise it will have value "input.bin." bcz for runs<=15 we don't require to create super run file
@@ -670,7 +670,7 @@ void replacement_merge_sort(FILE* inputFP, int* input_buffer, char* outputBinFil
 
     //Calculating how many keys we can accomodate in input_buffer from each
     int blockSize = 1000/runs;
-    printf("\n BLOCK SIZE: %d",blockSize);
+    //printf("\n BLOCK SIZE: %d",blockSize);
 
     //Total Numbers of files created =  runs
 
@@ -781,7 +781,7 @@ int main(int argc, char** argv)
         fseek(inputFP, 0L, SEEK_END);      //Setting file pointer at the end of the file
         file_size = ftell(inputFP);
         input_keys = file_size/sizeof(int);   //Total input keys present in the input.bin file
-        printf(" Total Input Keys: %ld\n",input_keys);
+        //printf(" Total Input Keys: %ld\n",input_keys);
         fseek(inputFP, 0L, SEEK_SET);    //Set input file pointer back to the beginning
         
         //Options

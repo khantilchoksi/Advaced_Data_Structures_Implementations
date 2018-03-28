@@ -3,9 +3,9 @@
 int main(){
     FILE *fp;
     int temp;
-    fp=fopen("input2.bin","wb");
-    for(int i=998;i>=0;i--){
-        temp=i;
+    fp=fopen("input3.bin","wb");
+    for(int i=0;i<=251122;i++){
+        temp=rand();
         fwrite(&temp,sizeof(int),1,fp);
         printf("%d\n",temp);
     }
