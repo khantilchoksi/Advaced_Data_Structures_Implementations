@@ -7,6 +7,7 @@
 //
 
 #include <stdio.h>
+#include <string.h>
 void printBuffer(int* buffer, int start, int end){
     
     for(; start<end;start++){
@@ -16,6 +17,19 @@ void printBuffer(int* buffer, int start, int end){
 
 int main(int argc, char** argv)
 {
+    //Run File name e.g. input.bin.012
+    char runFileName[1000];
+    //To store e.g. "012"
+    char currentRunName[4];
+    char* fileName = argv[1];
+    for(int i = 0 ; i<10; i++){
+        strcpy(runFileName,fileName);
+        snprintf(currentRunName, 4*sizeof(char), "%03d", (i));
+        strcat(runFileName,currentRunName);
+        printf("\n %s",runFileName);
+    }
+
+
     //int input_buffer[10];
     //int i = 0, length = 10;
     //for(; i<10; i++){
@@ -32,11 +46,11 @@ int main(int argc, char** argv)
     //buffer = buffer+1;
     //printf("\n OKAY: %d",*buffer);
 
-    int runs = 250;
-    int i = (runs/15) * 15;
-    printf("\n ANSWER: %d",i);
+    // int runs = 250;
+    // int i = (runs/15) * 15;
+    // printf("\n ANSWER: %d",i);
 
-    int blockSize = 1000/(runs - (runs/15)*15);
-    printf("\n NEW BLOCK SIZE: %d",blockSize);
+    // int blockSize = 1000/(runs - (runs/15)*15);
+    // printf("\n NEW BLOCK SIZE: %d",blockSize);
     return 0;
 }
