@@ -253,14 +253,16 @@ long findLeafNodeForAddKey(int key, btree_node *node, int order, FILE *fp, long 
 //Testing print array for debug
 void printArray(int *array, int size){
     printf("\n");
-    for(int i = 0;i<size; i++){
+    int i ;
+    for( i = 0;i<size; i++){
         printf(" %d ",array[i]);
     }
 }
 
 void printLongArray(long *array, int size){
     printf("\n");
-    for(int i = 0;i<size; i++){
+    int i;
+    for( i = 0;i<size; i++){
         printf(" %ld ",array[i]);
     }
 }
