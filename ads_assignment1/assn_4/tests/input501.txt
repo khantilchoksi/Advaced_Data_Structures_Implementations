@@ -1,24 +1,24 @@
 add -10
 print
-add -10
+add -5
+print
+add 0
+print
+add 1
+print
+add 5
 print
 add -10
 print
-add -10
+add 10
 print
-add -10
+add 15
 print
-add -10
+add 20
 print
-add -10
+add 25
 print
-add -10
+add 30
 print
-add -10
-print
-add -10
-print
-add -10
-print
-add -10
+add 35
 print

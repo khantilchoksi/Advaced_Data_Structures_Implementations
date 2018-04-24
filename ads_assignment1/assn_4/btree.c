@@ -149,38 +149,44 @@ void printBTree(btree_node *node, long rootNodeOffset, int order, FILE *fp){
     //Read root node
     readBTreeNodeFromFile(node, order, fp, rootNodeOffset);
     
-    enqueue(queue,rootNodeOffset,level);
-    printf(" %d: ",level);
-    while(isEmptyQueue(queue) != 1){
-        queue_node = dequeue(queue);
-        //Check if next level's node is this or not
-        if(level != queue_node->level){
-            level++;
-            printf("\n %d: ",level);
-        }
-        
-        s = 0;
-        readBTreeNodeFromFile(node, order, fp, queue_node->key);
-        //printf(" ");
-        while(s < node->n-1){
-            printf("%d,",node->key[s]);
-            //If child node exists, add it to queue
+    if(rootNodeOffset!= -1){
+        enqueue(queue,rootNodeOffset,level);
+        printf(" %d: ",level);
+        while(isEmptyQueue(queue) != 1){
+            queue_node = dequeue(queue);
+            //Check if next level's node is this or not
+            if(level != queue_node->level){
+                level++;
+                printf("\n %d: ",level);
+            }
+            
+            s = 0;
+            readBTreeNodeFromFile(node, order, fp, queue_node->key);
+            //printf(" ");
+            while(s < node->n-1){
+                printf("%d,",node->key[s]);
+                //If child node exists, add it to queue
+                if(node->child[s]!=0){
+                    enqueue(queue, node->child[s], (level+1));
+                }
+                s++;
+            }
+            printf("%d ",node->key[s]);
+            if(node->child[s]!=0){
+                enqueue(queue, node->child[s], (level+1));
+                s++;
+            }
             if(node->child[s]!=0){
                 enqueue(queue, node->child[s], (level+1));
             }
-            s++;
+            
         }
-        printf("%d ",node->key[s]);
-        if(node->child[s]!=0){
-            enqueue(queue, node->child[s], (level+1));
-            s++;
-        }
-        if(node->child[s]!=0){
-            enqueue(queue, node->child[s], (level+1));
-        }
-
+        printf("\n");
+    }else{
+        //Tree is empty
     }
-    printf("\n");
+    
+    
     
 }
 
@@ -649,6 +655,7 @@ int main(int argc, char** argv)
             //Write Root Node to file
             //writeBTreeNodeToFile(&node, order, inputFP, rootNodeOffset);
             //Save the root node back in file
+            writeRootNodeOffsetToFile(&rootNodeOffset,inputFP);
             break;
         }else{
             printf("\n Not a valid command!");
